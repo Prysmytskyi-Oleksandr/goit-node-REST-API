@@ -61,19 +61,20 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const result = await contacts.deleteById(id);
     if (!result) {
       throw HttpError(404, `Contact with ${id} not found`);
     }
-    res.status(200).json({
-      message: "contact deleted",
-    });
-    // res.json({
+    // res.status(200).json({
     //   message: "contact deleted",
     // });
+    res.json({
+      message: "contact deleted",
+    });
   } catch (error) {
     next(error);
   }
@@ -83,7 +84,8 @@ router.put("/:id", async (req, res, next) => {
   try {
     const { error } = addSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, error.message);
+      return res.status(400).json({ message: "missing fields" });
+      // throw HttpError(400, error.message);
     }
     const { id } = req.params;
     const result = await contacts.updateById(id, req.body);
